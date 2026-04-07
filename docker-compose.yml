@@ -7,10 +7,17 @@ services:
     environment:
       - GOOGLE_MCP_CREDENTIALS_DIR=/app/store_creds
     volumes:
-      - ./client_secret.json:/app/client_secret.json:ro
       - store_creds:/app/store_creds:rw
     env_file:
       - .env
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel --no-autoupdate --url http://gws_mcp:8000
+    depends_on:
+      gws_mcp:
+        condition: service_healthy
 
 volumes:
   store_creds:
