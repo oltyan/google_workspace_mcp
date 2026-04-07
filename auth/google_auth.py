@@ -514,6 +514,23 @@ async def start_auth_flow(
             code_verifier=flow.code_verifier,
         )
 
+        # Persist state to disk so it survives process restarts (stdio mode).
+        try:
+            state_file = os.path.join(DEFAULT_CREDENTIALS_DIR, "_oauth_state.json")
+            os.makedirs(os.path.dirname(state_file), exist_ok=True)
+            with open(state_file, "w") as f:
+                json.dump(
+                    {
+                        "state": oauth_state,
+                        "code_verifier": flow.code_verifier,
+                        "session_id": session_id,
+                    },
+                    f,
+                )
+            logger.info("Persisted OAuth state to disk for stdio mode resilience")
+        except Exception as e:
+            logger.warning(f"Failed to persist OAuth state to disk: {e}")
+
         logger.info(
             f"Auth flow started for {user_display_name}. Advise user to visit: {auth_url}"
         )
@@ -617,9 +634,43 @@ def handle_auth_callback(
         state = state_values[0] if state_values else None
 
         if state:
-            state_info = store.validate_and_consume_oauth_state(
-                state, session_id=session_id
-            )
+            try:
+                state_info = store.validate_and_consume_oauth_state(
+                    state, session_id=session_id
+                )
+            except ValueError:
+                if session_id is None:
+                    logger.warning(
+                        "OAuth state validation failed in stdio mode; "
+                        "falling back to latest stored state"
+                    )
+                    state_info = store.consume_latest_oauth_state()
+                    if not state_info:
+                        logger.warning(
+                            "No in-memory state available; "
+                            "attempting to load from disk"
+                        )
+                        state_file = os.path.join(
+                            DEFAULT_CREDENTIALS_DIR, "_oauth_state.json"
+                        )
+                        try:
+                            with open(state_file, "r") as f:
+                                disk_state = json.load(f)
+                            state_info = {
+                                "session_id": disk_state.get("session_id"),
+                                "code_verifier": disk_state.get("code_verifier"),
+                            }
+                            os.remove(state_file)
+                            logger.info(
+                                "Recovered OAuth state from disk"
+                            )
+                        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+                            raise ValueError(
+                                "Invalid or expired OAuth state parameter "
+                                "and no stored state available"
+                            )
+                else:
+                    raise
         elif session_id is None:
             # stdio mode fallback: state may be absent from Google's redirect
             # (e.g. when prompt=select_account is used with revoked credentials).
