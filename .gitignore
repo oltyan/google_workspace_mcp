@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *.so
 .mcp.json
-claude.md
 .beads/*
 .beads/issues.jsonl
 
