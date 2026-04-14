@@ -83,14 +83,6 @@ Each contains `*_tools.py` with `@server.tool()` definitions and optional `*_hel
 ## Deployment
 
 - **Server URL:** `https://mcp.musicalmycology.org/mcp`
-- **OAuth Client ID:** `609840661946-avn9dpgdi9dj941e7bnrlvrdigaqunaq.apps.googleusercontent.com`
+- **OAuth Client ID:** `609840661946-gkih0tdn059g9mahl03m5q1vqt6fkj3d.apps.googleusercontent.com`
 - Deployed via Docker Compose with Cloudflare tunnel (cloudflared sidecar)
 - Google Cloud Console for OAuth config: APIs & Credentials → OAuth 2.0 Client IDs
-
-## Pending: OAuth Redirect URI
-
-OAuth redirect URI updated in docker-compose.yml to `https://mcp.musicalmycology.org/oauth2callback` (commit d6f96b6) so remote clients can complete Google auth instead of being sent to localhost.
-
-**Still needed:** Add `https://mcp.musicalmycology.org/oauth2callback` to the authorized redirect URIs in Google Cloud Console for OAuth client `609840661946-avn9dpgdi9dj941e7bnrlvrdigaqunaq`. Without this, Google will reject the callback.
-
-After updating Google Console, git pull on the server and `docker-compose down && docker-compose up -d` to pick up the new env var.
