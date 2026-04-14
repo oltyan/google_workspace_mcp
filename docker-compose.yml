@@ -15,7 +15,12 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared
-    command: tunnel --no-autoupdate --url http://gws_mcp:8000
+    command: tunnel --no-autoupdate run
+    volumes:
+      - ${HOME}/.cloudflared:/etc/cloudflared/creds:ro
+      - ./cloudflared-config.yml:/etc/cloudflared/config.yml:ro
+    environment:
+      - TUNNEL_CONFIG=/etc/cloudflared/config.yml
     depends_on:
       gws_mcp:
         condition: service_healthy

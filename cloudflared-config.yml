@@ -1,0 +1,7 @@
+tunnel: b58b6f1b-c70e-4321-88e7-bd0bf6ae8a62
+credentials-file: /etc/cloudflared/creds/b58b6f1b-c70e-4321-88e7-bd0bf6ae8a62.json
+
+ingress:
+  - hostname: mcp.musicalmycology.org
+    service: http://gws_mcp:8000
+  - service: http_status:404
