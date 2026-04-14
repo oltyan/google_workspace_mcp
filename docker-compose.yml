@@ -6,6 +6,7 @@ services:
       - "8000:8000"
     environment:
       - GOOGLE_MCP_CREDENTIALS_DIR=/app/store_creds
+      - GOOGLE_OAUTH_REDIRECT_URI=https://mcp.musicalmycology.org/oauth2callback
     volumes:
       - store_creds:/app/store_creds:rw
     env_file:
