@@ -1,0 +1,29 @@
+schema_version: 1
+slug: google-workspace-mcp
+display_name: Google Workspace MCP
+status: live
+tier: tool
+
+description: >
+  Google Workspace MCP server. Exposes Gmail, Calendar, Docs, Sheets, Slides,
+  Chat, Forms, Tasks, Search, and Drive over the Model Context Protocol so
+  LLMs can read and manipulate Google docs.
+
+hosting_target: Mycelium, Docker, behind mm-homebody
+public_hostname: mcp.musicalmycology.org
+
+tech: [python, fastmcp, docker, google-api]
+
+auth_model: public
+ci_pipeline: github-actions
+
+expected_kuma_monitor:
+  type: docker
+  identifier: Tommyknocker
+
+github: https://github.com/oltyan/google_workspace_mcp
+mm_architecture_section: null
+
+notes:
+  - "Fork of taylorwilsdon/google_workspace_mcp; the MM-specific layer is the docker-compose entry, the homebody.* labels routing mcp.musicalmycology.org → gws_mcp:8000, and this mm-meta.yml. Avoid editing files that exist upstream so rebases stay clean."
+  - "End-user auth is per-request Google OAuth (server holds no MM-specific auth gate). auth_model: public reflects that the endpoint accepts unauthenticated traffic; OAuth happens at the protocol layer."
