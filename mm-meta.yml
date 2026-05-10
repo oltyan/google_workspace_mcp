@@ -14,7 +14,7 @@ public_hostname: mcp.musicalmycology.org
 
 tech: [python, fastmcp, docker, google-api]
 
-auth_model: public
+auth_model: [public]
 ci_pipeline: github-actions
 
 expected_kuma_monitor:
