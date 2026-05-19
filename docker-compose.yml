@@ -2,6 +2,7 @@ services:
   gws_mcp:
     build: .
     container_name: gws_mcp
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
@@ -11,19 +12,17 @@ services:
       - store_creds:/app/store_creds:rw
     env_file:
       - .env
+    networks:
+      - default
+      - shared-tunnel
+    labels:
+      homebody.enable: "true"
+      homebody.hostname: "mcp.musicalmycology.org"
+      homebody.service: "http://gws_mcp:8000"
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: cloudflared
-    command: tunnel --no-autoupdate run
-    volumes:
-      - ${HOME}/.cloudflared:/etc/cloudflared/creds:ro
-      - ./cloudflared-config.yml:/etc/cloudflared/config.yml:ro
-    environment:
-      - TUNNEL_CONFIG=/etc/cloudflared/config.yml
-    depends_on:
-      gws_mcp:
-        condition: service_healthy
+networks:
+  shared-tunnel:
+    external: true
 
 volumes:
   store_creds:

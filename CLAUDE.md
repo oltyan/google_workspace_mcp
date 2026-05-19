@@ -84,5 +84,5 @@ Each contains `*_tools.py` with `@server.tool()` definitions and optional `*_hel
 
 - **Server URL:** `https://mcp.musicalmycology.org/mcp`
 - **OAuth Client ID:** `609840661946-gkih0tdn059g9mahl03m5q1vqt6fkj3d.apps.googleusercontent.com`
-- Deployed via Docker Compose with Cloudflare tunnel (cloudflared sidecar)
+- Deployed via Docker Compose. The Cloudflare tunnel is no longer a sidecar in this project; it's owned by `mm-homebody`. This service registers with homebody via labels (`homebody.enable=true`, `homebody.hostname=mcp.musicalmycology.org`, `homebody.service=http://gws_mcp:8000`) and joins the external `shared-tunnel` network.
 - Google Cloud Console for OAuth config: APIs & Credentials → OAuth 2.0 Client IDs
