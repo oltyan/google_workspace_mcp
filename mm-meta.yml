@@ -27,3 +27,9 @@ mm_architecture_section: null
 notes:
   - "Fork of taylorwilsdon/google_workspace_mcp; the MM-specific layer is the docker-compose entry, the homebody.* labels routing mcp.musicalmycology.org → gws_mcp:8000, and this mm-meta.yml. Avoid editing files that exist upstream so rebases stay clean."
   - "End-user auth is per-request Google OAuth (server holds no MM-specific auth gate). auth_model: public reflects that the endpoint accepts unauthenticated traffic; OAuth happens at the protocol layer."
+
+costs:
+  vendor: Internal-Mycelium
+  infra_monthly_usd: 0
+  token_monthly_usd: 0
+  notes: Docker container on Mycelium; Google API usage is on the free quota for current traffic.
